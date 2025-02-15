@@ -6,8 +6,8 @@ const createTask =  (task) => {
 	return axios.post(`${SERVER_URL}/create-task`, task);
 }
 
-const getTask =  (id) => {
-	return axios.get(`${SERVER_URL}/get-task/${id}`);
+const getTask =  () => {
+	return axios.get(`${SERVER_URL}/get-task`);
 }
 
 const deleteTask =  (id) => {

@@ -16,12 +16,12 @@ exports.createTaskList = async (req, res) => {
 }
 
 exports.getTaskList = async (req, res) => { 
-	let {id} = req.params
+	
 	try {
-		const taskList = await TaskList.find({createdAt: id});
-		res.send(taskList);
-		console.log(taskList);	
+		const taskList = await TaskList.find();
 		res.status(200).json(taskList);
+		console.log(taskList);	
+		
 	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}

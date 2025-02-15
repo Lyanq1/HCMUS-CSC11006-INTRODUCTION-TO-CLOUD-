@@ -3,7 +3,7 @@ const { createTaskList, getTaskList, deleteTaskList, updateTaskList } = require(
 const router = express.Router();
 
 router.post('/create-task', createTaskList);
-router.get('/get-task/:id', getTaskList);
+router.get('/get-task/', getTaskList);
 router.delete('/delete-task/:id', deleteTaskList);
 router.patch('/update-task/:id', updateTaskList);
 
