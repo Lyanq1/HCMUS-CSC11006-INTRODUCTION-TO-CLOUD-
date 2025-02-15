@@ -10,7 +10,7 @@ const Task = () => {
 	const [description, setDescription] = useState("")
 	const [isAddingTask, setIsAddingTask] = useState(false)
 	const [loading, setLoading] = useState(false)
-
+	const [tasks, setTasks] = useState([])
 	const handleSubmitTask = async () => {
 		setLoading(true)
 		try {
@@ -56,7 +56,17 @@ const Task = () => {
 					  </Modal>
 
 			</section>
-				
+			{/* Showing title and description of the above input task */}
+				<div>
+					{tasks.map( task => {
+						return (
+							<div key={task._id}>
+								<h2>{task.title}</h2>
+								<p>{task.description}</p>
+							</div>
+					)})}
+
+				</div>
 		</>
 			
 	)
