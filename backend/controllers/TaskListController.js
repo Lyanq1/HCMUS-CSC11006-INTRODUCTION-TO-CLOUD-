@@ -14,3 +14,40 @@ exports.createTaskList = async (req, res) => {
 		res.status(400).json({ message: err.message });
 	}
 }
+
+exports.getTaskList = async (req, res) => { 
+	let {id} = req.params
+	try {
+		const taskList = await TaskList.find({createdAt: id});
+		res.send(taskList);
+		console.log(taskList);	
+		res.status(200).json(taskList);
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+}
+
+exports.updateTaskList = async (req, res) => { 
+	try {
+		const {id} = req.params;
+		const data = req.body;
+		const result = await TaskList.findByIdAndUpdate(id, {$set: data}, {returnOriginal: false});
+		console.log(result);
+		res.send({message:'Task updated successfully'});
+	}
+	catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+}
+
+exports.deleteTaskList = async (req, res) => {
+	try {
+		const {id} = req.params;
+		const result = await TaskList.findByIdAndDelete(id);
+		console.log(result);
+		res.send({message:'Task deleted successfully'});
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+}
+ 
