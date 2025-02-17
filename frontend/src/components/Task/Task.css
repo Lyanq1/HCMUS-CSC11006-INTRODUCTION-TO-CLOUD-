@@ -19,7 +19,11 @@
 	align-items: center;
 	display: flex;
 }
-
+.task-container {
+  display: flex;
+  display: flex;
+    flex-wrap: wrap;
+}
 .task-input {
 	 display: flex;
   align-items: center;
@@ -38,4 +42,23 @@
     /* display: flex; */
     flex-direction: column;
     justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.task-status {
+  display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.description {
+    margin: 0rem 0 1rem 0;
+    /* font-size: 1.2rem;
+    font-weight: 500; */
+}
+
+.task-footer {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

@@ -15,7 +15,24 @@ const Task = () => {
 	const [isAddingTask, setIsAddingTask] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const [tasks, setTasks] = useState([])
+	const [currentEditItem, setCurrentEditItem] = useState("")
+	const [isEditing, setIsEditing] = useState(false)
+	const [updatedTitle, setUpdatedTitle] = useState("")
+	const [updatedDescription, setUpdatedDescription] = useState("")
+	const [updatedStatus, setUpdatedStatus] = useState("")
 
+	const getAllTasks = async () => {
+		try {
+			const response = await toDoServices.getTask()
+			console.log(response.data)
+			setTasks(response.data)
+		}
+		catch(err) {
+				console.log(err)
+				message.error('Failed to fetch tasks')
+		
+			}
+		}
 	//get all tasks
 	useEffect(() => {
 		
@@ -52,6 +69,7 @@ const Task = () => {
 			setLoading(false)
 			message.success('Task added successfully')
 			setIsAddingTask(false)
+			getAllTasks()
 			setTitle('');
 			setDescription('');
 			setPriority('Low');
@@ -62,6 +80,53 @@ const Task = () => {
 			message.error('Failed to add task')
 		}
 	}
+
+	const handleEdit = (task) => {
+		setCurrentEditItem(task)
+		setUpdatedTitle(task.title)
+		setUpdatedDescription(task.description)
+		setUpdatedStatus(task.priority)
+		setIsEditing(true)
+	}
+
+
+	const handleUpdateTask = async () => {
+		try {
+			setLoading(true)
+			const data =  {
+				title: updatedTitle,
+				description: updatedDescription,
+				priority: updatedStatus
+			}
+			const response = await toDoServices.updateTask(currentEditItem._id, data)
+			console.log(response.data)
+			message.success(`${currentEditItem.title} updated successfully`)
+			setLoading(false)
+			setIsEditing(false)
+			getAllTasks()
+		} catch (err)
+		{
+			console.log(err)
+			setLoading(false)
+			message.error('Failed to update task')
+		}
+	}
+
+	const handleDeleteTask = async (task) => {
+		try {
+			const response = await toDoServices.deleteTask(task._id)
+			console.log(response.data)
+			message.success(`${task.title} deleted successfully`)
+			getAllTasks()
+		} catch (err) {
+			console.log(err)
+			message.error('Failed to delete task')
+
+	}
+
+	
+	}
+	// const 
 	return (
 		<>
 			<section className="wrapper">
@@ -94,23 +159,50 @@ const Task = () => {
 			</section>
 
 			{/* Display all cards of above input task */}
-				<div>
+				<div className="task-container">
 					{tasks.map( (task) => {
 						return (
 							<div key={task._id}  className="task-card">
+								<div className="task-status">
 								<h2>{task.title}</h2>
-								<p>{task.description}</p>
 								<Tag color = {task.priority === "High" ? "red" : task.priority === "Medium" ? "orange": "green"}>
 									{task.priority}
 								</Tag>
-								<Tag>{new Date(task.createdAt).toLocaleString() }</Tag>
-								<div className="task-actions">
-									<Tooltip title="Edit Task"><></> Edit</Tooltip>
-									<Tooltip title="Delete Task">Delete</Tooltip>
+								</div>
+								<p className="description" >{task.description}</p>
+								<Divider />
+
+								<div className="task-footer">
+									<Tag>{new Date(task.createdAt).toLocaleString() }</Tag>
+									<div className="task-actions">
+										<Tooltip title="Edit Task"> <EditOutlined onClick={() => handleEdit(task)} label="Edit"/> Edit</Tooltip>
+										<Tooltip title="Delete Task"> <DeleteOutlined onClick={() => handleDeleteTask(task)} style={{color:'red'}} />Delete</Tooltip>
+									</div>
 								</div>
 							</div>
 					)})}
+							<Modal confirmLoading={loading} title={`Update ${currentEditItem.title}`} open={isEditing} onOk={handleUpdateTask} onCancel={()=>setIsEditing(false)}>
+								<Input style={{marginBottom:'1rem'}} placeholder='Updated Title' value={updatedTitle} onChange={(e)=>setUpdatedTitle(e.target.value)} />
+								<Input.TextArea style={{marginBottom:'1rem'}} placeholder='Updated Description' value={updatedDescription} onChange={(e)=>setUpdatedDescription(e.target.value)} />
+								<Select
+							onChange={(value)=>setUpdatedStatus(value)}
+							value={updatedStatus}
+							options={[
+								
+								{
+									
+									label: 'Easy',
+								},
 
+								{
+									label: 'Medium',
+								},
+								{
+									label: 'High',
+								}
+								]}
+							/>
+     		 			</Modal>
 				</div>
 		</>
 			
