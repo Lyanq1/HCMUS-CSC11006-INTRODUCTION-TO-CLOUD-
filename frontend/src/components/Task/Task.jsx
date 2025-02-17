@@ -20,6 +20,11 @@ const Task = () => {
 	const [updatedTitle, setUpdatedTitle] = useState("")
 	const [updatedDescription, setUpdatedDescription] = useState("")
 	const [updatedStatus, setUpdatedStatus] = useState("")
+	const [currentPriority, setCurrentPriority] = useState("All")
+	const [lowPriorityTasks, setLowPriorityTasks] = useState([])
+	const [mediumPriorityTasks, setMediumPriorityTasks] = useState([])
+	const [highPriorityTasks, setHighPriorityTasks] = useState([])
+	const [currentTask, setcurrentTask] = useState([])
 
 	const getAllTasks = async () => {
 		try {
@@ -35,7 +40,6 @@ const Task = () => {
 		}
 	//get all tasks
 	useEffect(() => {
-		
 		const getAllTasks = async () => {
 			try {
 				const response = await toDoServices.getTask()
@@ -50,6 +54,27 @@ const Task = () => {
 		}
 		getAllTasks()
 	}, [])
+
+	useEffect(() => {
+			const lowPriorityTasks = tasks.filter(task => task.priority === "Low")
+			const mediumPriorityTasks = tasks.filter(task => task.priority === "Medium")
+			const highPriorityTasks = tasks.filter(task => task.priority === "High")
+			setLowPriorityTasks(lowPriorityTasks)
+			setMediumPriorityTasks(mediumPriorityTasks)
+			setHighPriorityTasks(highPriorityTasks)
+			if (currentTask === "Low") {
+				setcurrentTask(lowPriorityTasks)
+			}
+			else if (currentTask === "Medium") {
+				setcurrentTask(mediumPriorityTasks)
+			}
+			else if (currentTask === "High") {
+				setcurrentTask(highPriorityTasks)
+			}
+			else {
+				setcurrentTask(tasks)
+			}
+	}, [tasks])
 
 	const handleSubmitTask = async () => {
 		setLoading(true)
@@ -125,7 +150,22 @@ const Task = () => {
 		}
 	}
 	
-	
+	const handlePriority = (value) => {
+		setCurrentPriority(value)
+		
+		if (value === "All") {
+			setcurrentTask(tasks)
+		}
+		else if (value === "Low") {
+			setcurrentTask(lowPriorityTasks)
+		}
+		else if (value === "Medium") {
+			setcurrentTask(mediumPriorityTasks)
+		}
+		else if (value === "High") {
+			setcurrentTask(highPriorityTasks)
+		}
+	}
 
 	return (
 		<>
@@ -136,6 +176,18 @@ const Task = () => {
 						<input type="text" placeholder="Search your task"
 									style={{width: '50%'}}/>
 							<Button onClick={() => setIsAddingTask(true)} type = 'primary' variant ="contained" color="success" > Add new task</Button>
+							<Select
+								value={currentPriority}
+								style={{ width: 180 }}
+								onChange={handlePriority}
+								options = {[
+									{label: "All", value: "All"},
+									{label: "Low", value: "Low"},
+									{label: "Medium", value: "Medium"},
+									{label: "High", value: "High"}
+								]}
+							/>
+					
 					</div>
 				</div>
 				<Divider />
@@ -148,11 +200,18 @@ const Task = () => {
 									 value={title} 
 									 onChange={e => setTitle(e.target.value)} />
 						 <Input.TextArea  placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)}/>
-							<Select value={priority} style={{ width: "100%" }} onChange={(value) => setPriority(value)}>
-								<Option value="Low">Low</Option>
-								<Option value="Medium">Medium</Option>
-								<Option value="High">High</Option>
-							</Select>  
+							<Select value={priority} style={{ width: "100%" }} onChange={(value) => setPriority(value)}
+
+								// {/* <Option value="All">All</Option>
+								// <Option value="Low">Low</Option>
+								// <Option value="Medium">Medium</Option>
+								// <Option value="High">High</Option> */}
+								options={[{ label: "All", value: "All" },  // Default option to show all tasks
+    { label: "Low", value: "Low" },
+    { label: "Medium", value: "Medium" },
+    { label: "High", value: "High" }
+  ]}
+							/>  
 						
 					</Modal>
 
@@ -160,7 +219,7 @@ const Task = () => {
 
 			{/* Display all cards of above input task */}
 				<div className="task-container">
-					{tasks.map( (task) => {
+					{currentTask.map( (task) => {
 						return (
 							<div key={task._id}  className="task-card">
 								<div className="task-status">
