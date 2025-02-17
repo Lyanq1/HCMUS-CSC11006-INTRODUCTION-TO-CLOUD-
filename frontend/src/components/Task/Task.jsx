@@ -187,21 +187,11 @@ const Task = () => {
 								<Select
 							onChange={(value)=>setUpdatedStatus(value)}
 							value={updatedStatus}
-							options={[
-								
-								{
-									
-									label: 'Easy',
-								},
-
-								{
-									label: 'Medium',
-								},
-								{
-									label: 'High',
-								}
-								]}
-							/>
+							>
+								<Option value="Low">Low</Option>
+								<Option value="Medium">Medium</Option>
+    						<Option value="High">High</Option>
+							</Select>
      		 			</Modal>
 				</div>
 		</>
