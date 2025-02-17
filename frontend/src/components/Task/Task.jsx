@@ -1,7 +1,7 @@
 import "./Task.css"
 import { useEffect, useState } from 'react'
 import { Button, Divider } from '@mui/material'
-import {Modal, Input, message, Tag, Select, Tooltip} from 'antd';
+import {Modal, Input, message, Tag, Select, Tooltip, Empty} from 'antd';
 import toDoServices from "../../services/toDoServices";
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 
@@ -25,6 +25,8 @@ const Task = () => {
 	const [mediumPriorityTasks, setMediumPriorityTasks] = useState([])
 	const [highPriorityTasks, setHighPriorityTasks] = useState([])
 	const [currentTask, setcurrentTask] = useState([])
+	const [filteredTask, setFilteredTask] = useState([])
+	const [searchQuery, setSearchQuery] = useState("");
 
 	const getAllTasks = async () => {
 		try {
@@ -167,13 +169,25 @@ const Task = () => {
 		}
 	}
 
+	const handleSearch = (e) => {
+		let query = e.target.value
+		setSearchQuery(query)
+		let filteredList = tasks.filter((item) => item.title.toLowerCase().match(query.toLowerCase()));
+		if (filteredList.length > 0 && query) {
+			setFilteredTask(filteredList)
+		} else {
+			setFilteredTask([])
+		}
+
+	}
 	return (
 		<>
 			<section className="wrapper">
 				<div className="header">
 				<h2>Your tasks</h2>
 					<div className="task-input">
-						<input type="text" placeholder="Search your task"
+						<input type="text" placeholder="Search your task" 
+									onChange={handleSearch}
 									style={{width: '50%'}}/>
 							<Button onClick={() => setIsAddingTask(true)} type = 'primary' variant ="contained" color="success" > Add new task</Button>
 							<Select
@@ -207,19 +221,19 @@ const Task = () => {
 								// <Option value="Medium">Medium</Option>
 								// <Option value="High">High</Option> */}
 								options={[{ label: "All", value: "All" },  // Default option to show all tasks
-    { label: "Low", value: "Low" },
-    { label: "Medium", value: "Medium" },
-    { label: "High", value: "High" }
-  ]}
+													{ label: "Low", value: "Low" },
+													{ label: "Medium", value: "Medium" },
+													{ label: "High", value: "High" }
+								]}
 							/>  
 						
 					</Modal>
 
-			</section>
+			
 
 			{/* Display all cards of above input task */}
 				<div className="task-container">
-					{currentTask.map( (task) => {
+					{ filteredTask.length > 0 || searchQuery ? filteredTask.map( (task) => {
 						return (
 							<div key={task._id}  className="task-card">
 								<div className="task-status">
@@ -239,20 +253,47 @@ const Task = () => {
 									</div>
 								</div>
 							</div>
-					)})}
+					)}) : currentTask.length > 0  ? currentTask.map( (task) => {
+						return (
+							<div key={task._id}  className="task-card">
+								<div className="task-status">
+								<h2>{task.title}</h2>
+								<Tag color = {task.priority === "High" ? "red" : task.priority === "Medium" ? "orange": "green"}>
+									{task.priority}
+								</Tag>
+								</div>
+								<p className="description" >{task.description}</p>
+								<Divider />
+
+								<div className="task-footer">
+									<Tag>{new Date(task.createdAt).toLocaleString() }</Tag>
+									<div className="task-actions">
+										<Tooltip title="Edit Task"> <EditOutlined onClick={() => handleEdit(task)} label="Edit"/> Edit</Tooltip>
+										<Tooltip title="Delete Task"> <DeleteOutlined onClick={() => handleDeleteTask(task)} style={{color:'red'}} />Delete</Tooltip>
+									</div>
+								</div>
+							</div>
+					)}) : 
+							<Empty/>
+					}
+					</div>
+
+
+
 							<Modal confirmLoading={loading} title={`Update ${currentEditItem.title}`} open={isEditing} onOk={handleUpdateTask} onCancel={()=>setIsEditing(false)}>
 								<Input style={{marginBottom:'1rem'}} placeholder='Updated Title' value={updatedTitle} onChange={(e)=>setUpdatedTitle(e.target.value)} />
 								<Input.TextArea style={{marginBottom:'1rem'}} placeholder='Updated Description' value={updatedDescription} onChange={(e)=>setUpdatedDescription(e.target.value)} />
 								<Select
-							onChange={(value)=>setUpdatedStatus(value)}
-							value={updatedStatus}
-							>
+									onChange={(value)=>setUpdatedStatus(value)}
+									value={updatedStatus}
+								>
 								<Option value="Low">Low</Option>
 								<Option value="Medium">Medium</Option>
     						<Option value="High">High</Option>
 							</Select>
      		 			</Modal>
-				</div>
+				
+				</section>
 		</>
 			
 	)
