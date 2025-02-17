@@ -122,11 +122,11 @@ const Task = () => {
 			console.log(err)
 			message.error('Failed to delete task')
 
+		}
 	}
-
 	
-	}
-	// const 
+	
+
 	return (
 		<>
 			<section className="wrapper">
