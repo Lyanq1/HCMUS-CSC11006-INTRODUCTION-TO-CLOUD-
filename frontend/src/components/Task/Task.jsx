@@ -186,7 +186,7 @@ const Task = () => {
 				<div className="header">
 				<h2>Your tasks</h2>
 					<div className="task-input">
-						<input type="text" placeholder="Search your task" 
+						<Input type="text" placeholder="Search your task" 
 									onChange={handleSearch}
 									style={{width: '50%'}}/>
 							<Button onClick={() => setIsAddingTask(true)} type = 'primary' variant ="contained" color="success" > Add new task</Button>
@@ -220,7 +220,8 @@ const Task = () => {
 								// <Option value="Low">Low</Option>
 								// <Option value="Medium">Medium</Option>
 								// <Option value="High">High</Option> */}
-								options={[{ label: "All", value: "All" },  // Default option to show all tasks
+								options={[
+									  // Default option to show all tasks
 													{ label: "Low", value: "Low" },
 													{ label: "Medium", value: "Medium" },
 													{ label: "High", value: "High" }
