@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const SERVER_URL = 'http://localhost:5000/api/task';
-
+// const SERVER_URL = 'http://localhost:5000/api/task';
+const SERVER_URL ='http://13.212.71.19'
 const createTask =  (task) => {
 	return axios.post(`${SERVER_URL}/create-task`, task);
 }
